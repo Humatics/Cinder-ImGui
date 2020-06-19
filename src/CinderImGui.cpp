@@ -392,7 +392,20 @@ void Renderer::render( ImDrawData* draw_data )
 				gl::ScopedBuffer scopedIndexBuffer( mIbo );
 				gl::ScopedGlslProg scopedShader( getGlslProg() );
 				gl::ScopedTextureBind scopedTexture( GL_TEXTURE_2D, (GLuint)(intptr_t) pcmd->TextureId );
-				gl::ScopedScissor scopedScissors( (int)pcmd->ClipRect.x, (int)(height - pcmd->ClipRect.w), (int)(pcmd->ClipRect.z - pcmd->ClipRect.x), (int)(pcmd->ClipRect.w - pcmd->ClipRect.y) );
+				// erauhut 20200619 - disable scoped scissor - this behaves differently on high density
+				// displays based on the underlying OS or possibly other factors.
+				// The following is the original code:
+				//
+				//    gl::ScopedScissor scopedScissors( (int)pcmd->ClipRect.x, (int)(height - pcmd->ClipRect.w), (int)(pcmd->ClipRect.z - pcmd->ClipRect.x), (int)(pcmd->ClipRect.w - pcmd->ClipRect.y) );
+				//
+				// and a suitable replacement if ALL deployment targets are recent hardware on MacOS 10.15 (Catalina).
+				// Note that the framebuffer scale actually needs to be set elsewhere to reflect the effective scaling on the current monitor.
+				//
+				// gl::ScopedScissor scopedScissors(
+				//     (int)(pcmd->ClipRect.x * ImGui::GetIO().DisplayFramebufferScale.x),
+				//       (int)((height - pcmd->ClipRect.w) * ImGui::GetIO().DisplayFramebufferScale.y),
+				//       (int)((pcmd->ClipRect.z - pcmd->ClipRect.x) * ImGui::GetIO().DisplayFramebufferScale.x),
+				//       (int)((pcmd->ClipRect.w - pcmd->ClipRect.y) * ImGui::GetIO().DisplayFramebufferScale.y));
 				gl::ScopedDepth scopedDepth( false );
 				gl::ScopedBlendAlpha scopedBlend;
 				gl::ScopedFaceCulling scopedFaceCulling( false );
