@@ -32,7 +32,7 @@
 #include "CinderImGui.h"
 #define IMGUI_DEFINE_MATH_OPERATORS
 #define IMGUI_DEFINE_PLACEMENT_NEW
-#include "imgui_internal.h"
+#include "imgui/imgui_internal.h"
 
 #include "cinder/app/App.h"
 #include "cinder/gl/scoped.h"
